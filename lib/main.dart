@@ -1,66 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_vocation_app/core/core.dart';
+import 'package:my_vocation_app/core/global/global_context.dart';
+import 'package:my_vocation_app/core/rest/custom_dio.dart';
+import 'package:my_vocation_app/modules/home/home_module.dart';
+import 'package:my_vocation_app/modules/login/domain/bloc/login_bloc.dart';
+import 'package:my_vocation_app/modules/login/infra/repositories/login_repository.dart';
+import 'package:my_vocation_app/modules/login/login_module.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  runApp(MyVocationApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyVocationApp extends StatelessWidget {
+  final navigatorKey = GlobalKey<NavigatorState>();
+  MyVocationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return MultiProvider(
+      providers: [
+        Provider<CustomDio>(create: (context) => CustomDio()),
+        Provider<GlobalContext>(
+          create: (context) => GlobalContext(
+            navigatorKey: navigatorKey,
+            loginRepository: context.read(),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+        ...loginDependencies,
+        ...homeDependencies,
+      ],
+      child: AppWidget(),
     );
   }
 }
