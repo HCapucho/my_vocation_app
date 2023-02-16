@@ -5,6 +5,7 @@ import 'package:my_vocation_app/core/extensions/date_time_extension.dart';
 
 @JsonSerializable()
 class Usuario {
+  final int id;
   final String nome;
   final String cpf;
   final DateTime? dataNascimento;
@@ -13,6 +14,7 @@ class Usuario {
   final String? token;
 
   Usuario({
+    required this.id,
     required this.nome,
     required this.cpf,
     required this.dataNascimento,
@@ -23,6 +25,7 @@ class Usuario {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'nome': nome,
       'cpf': cpf,
       'dataNascimento': dataNascimento?.toIso8601String(),
@@ -34,6 +37,7 @@ class Usuario {
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
+      id: map['id'] as int,
       nome: map['nome'] as String,
       cpf: map['cpf'] as String,
       dataNascimento:

@@ -28,6 +28,7 @@ class LoginRepository {
       final sp = await SharedPreferences.getInstance();
       sp.setString('accessToken', accessToken);
       sp.setString('username', result.nome);
+      sp.setInt('idUser', result.id);
 
       return ApiResponse<Usuario>.success(result);
     } catch (e, s) {

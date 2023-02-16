@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:my_vocation_app/core/rest/api_error_handler.dart';
 import 'package:my_vocation_app/core/rest/api_response.dart';
@@ -23,8 +22,6 @@ class HomeRepository {
     } catch (e, s) {
       log('Erro ao buscar questionários', error: e, stackTrace: s);
       return ApiErrorHandler.toApiResponse<List<Questionario>>(e);
-      // return ApiResponse.error(
-      //     e.response?.statusCode, e.response?.statusMessage);
     }
   }
 }

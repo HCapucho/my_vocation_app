@@ -22,21 +22,32 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
   );
 
+  static final TextStyle heading30 = GoogleFonts.notoSans(
+    color: AppColors.black,
+    fontSize: 30,
+    fontWeight: FontWeight.w600,
+  );
+
   static final TextStyle heading40 = GoogleFonts.notoSans(
     color: AppColors.black,
     fontSize: 40,
     fontWeight: FontWeight.w600,
   );
 
-  static final TextStyle heading15 = GoogleFonts.notoSans(
+  static final TextStyle heading18 = GoogleFonts.notoSans(
     color: AppColors.black,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: FontWeight.w600,
   );
 
   static final TextStyle body = GoogleFonts.notoSans(
     color: AppColors.grey,
     fontSize: 13,
+    fontWeight: FontWeight.normal,
+  );
+  static final TextStyle body15 = GoogleFonts.notoSans(
+    color: AppColors.grey,
+    fontSize: 15,
     fontWeight: FontWeight.normal,
   );
 

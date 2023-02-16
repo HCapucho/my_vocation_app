@@ -27,7 +27,7 @@ class QuizCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: 40,
               height: 40,
               child: Image.asset(AppImages.blocks),
@@ -35,10 +35,10 @@ class QuizCardWidget extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               title,
-              style: AppTextStyles.heading15,
+              style: AppTextStyles.heading18,
             ),
             SizedBox(height: 20),
-            Text("$numberOfQuestions questões", style: AppTextStyles.body11),
+            Text("$numberOfQuestions questões", style: AppTextStyles.body15),
           ],
         ),
       ),

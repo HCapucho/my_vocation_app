@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_vocation_app/core/core.dart';
@@ -58,9 +60,14 @@ class _HomePageState extends State<HomePage>
           }
           if (state is GetQuizzesSuccess) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 19),
+              padding: const EdgeInsets.all(19),
               child: Column(
                 children: [
+                  Text(
+                    "Questionários",
+                    style: AppTextStyles.heading30,
+                  ),
+                  SizedBox(height: 24),
                   Expanded(
                     child: GridView.count(
                       crossAxisCount: 2,
@@ -71,12 +78,13 @@ class _HomePageState extends State<HomePage>
                                 title: e.nome,
                                 numberOfQuestions: e.quantidadePerguntas,
                                 onTap: () {
-                                  //   Navigator.of(context).push(MaterialPageRoute(
-                                  //   builder: (context) => QuizPage(
-                                  //     questions: e.questions,
-                                  //     title: e.title,
-                                  //   ),
-                                  // ));
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => QuizPage(
+                                      idQuestionario: e.id,
+                                      quantidadePerguntas: e.quantidadePerguntas,
+                                      nome: e.nome,
+                                    ),
+                                  ));
                                 },
                               ))
                           .toList(),

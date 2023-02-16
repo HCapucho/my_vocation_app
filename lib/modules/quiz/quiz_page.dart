@@ -1,35 +1,73 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:my_vocation_app/models/question_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_vocation_app/core/helpers/loader.dart';
+import 'package:my_vocation_app/core/helpers/messages.dart';
+import 'package:my_vocation_app/modules/home/domain/bloc/home_bloc.dart';
+import 'package:my_vocation_app/modules/quiz/domain/bloc/quiz_bloc.dart';
+import 'package:my_vocation_app/modules/quiz/domain/models/enums/tipo_resposta.dart';
+import 'package:my_vocation_app/modules/quiz/domain/models/pergunta.dart';
+import 'package:my_vocation_app/modules/quiz/infra/dtos/resposta_questionario_dto.dart';
 import 'package:my_vocation_app/modules/quiz/quiz_controller.dart';
 import 'package:my_vocation_app/modules/quiz/widgets/next_button/next_button_widget.dart';
 import 'package:my_vocation_app/modules/quiz/widgets/question_indicator/question_indicator_widget.dart';
 import 'package:my_vocation_app/modules/quiz/widgets/quiz/quiz_widget.dart';
 import 'package:my_vocation_app/modules/result/result_page.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuizPage extends StatefulWidget {
-  final List<QuestionModel> questions;
-  final String title;
-  const QuizPage({Key? key, required this.questions, required this.title})
-      : super(key: key);
+  final int idQuestionario;
+  final int quantidadePerguntas;
+  final String nome;
+  const QuizPage({
+    Key? key,
+    required this.idQuestionario,
+    required this.quantidadePerguntas,
+    required this.nome,
+  }) : super(key: key);
 
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
-class _QuizPageState extends State<QuizPage> {
+class _QuizPageState extends State<QuizPage>
+    with Messages<QuizPage>, Loader<QuizPage> {
+  late final QuizBloc bloc;
   final controller = QuizController();
   final pageController = PageController();
 
   @override
   void initState() {
+    super.initState();
     pageController.addListener(() {
       controller.currentPage = pageController.page!.toInt() + 1;
     });
-    super.initState();
+    bloc = context.read<QuizBloc>();
+    _startQuiz();
+    _getQuestions();
+  }
+
+  @override
+  void dispose() {
+    bloc.close();
+    super.dispose();
+  }
+
+  void _getQuestions() {
+    bloc.add(GetQuestionsEvent(widget.idQuestionario));
+  }
+
+  void _startQuiz() async {
+    var sp = await SharedPreferences.getInstance();
+    var idUsuario = sp.getInt("idUser");
+
+    bloc.add(StartQuizEvent(idUsuario!, widget.idQuestionario));
   }
 
   void nextPage() {
-    if (controller.currentPage < widget.questions.length) {
+    if (controller.currentPage < widget.quantidadePerguntas) {
       pageController.nextPage(
         duration: Duration(milliseconds: 100),
         curve: Curves.linear,
@@ -37,8 +75,10 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void onSelected(int value) {
-    controller.countResultAnswers += value;
+  void onSelected(int value, int idPergunta) {
+    final resposta = RespostaQuestionarioDto(
+        idPergunta: idPergunta, resposta: TipoResposta.values[value]);
+    controller.respostas.add(resposta);
     nextPage();
   }
 
@@ -62,21 +102,49 @@ class _QuizPageState extends State<QuizPage> {
                   valueListenable: controller.currentPageNotifier,
                   builder: (context, value, _) => QuestionIndicatorWidget(
                         currentPage: value,
-                        length: widget.questions.length,
+                        length: widget.quantidadePerguntas,
                       )),
             ],
           ),
         ),
       ),
-      body: PageView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: pageController,
-        children: widget.questions
-            .map((e) => QuizWidget(
-                  question: e,
-                  onSelected: onSelected,
-                ))
-            .toList(),
+      body: BlocConsumer<QuizBloc, QuizState>(
+        listener: (context, state) {
+          if (state is GetQuestionsInProgress) {
+            showLoader();
+          }
+          if (state is GetQuestionsFailure) {
+            hideLoader();
+            showError(state.errorMessage);
+          }
+          if (state is GetQuestionsSuccess) {
+            hideLoader();
+          }
+        },
+        buildWhen: (context, state) {
+          return state is GetQuestionsSuccess;
+        },
+        builder: (context, state) {
+          if (state is GetQuestionsInProgress) {
+            return Container();
+          }
+          if (state is GetQuestionsFailure) {
+            return Container();
+          }
+          if (state is GetQuestionsSuccess) {
+            return PageView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: pageController,
+              children: state.questions
+                  .map((e) => QuizWidget(
+                        question: e,
+                        onTap: onSelected,
+                      ))
+                  .toList(),
+            );
+          }
+          return Container();
+        },
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -86,17 +154,20 @@ class _QuizPageState extends State<QuizPage> {
             builder: (context, value, _) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                if (value == widget.questions.length)
+                if (value == widget.quantidadePerguntas)
                   Expanded(
                     child: NextButtonWidget.green(
                       label: "Confirmar",
                       onTap: () {
+                        for (var element in controller.respostas) {
+                          log(element.resposta.toString());
+                        }
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => ResultPage(
-                              title: widget.title,
-                              length: widget.questions.length,
-                              result: controller.countResultAnswers,
+                              title: widget.nome,
+                              length: widget.quantidadePerguntas,
+                              result: 0,
                             ),
                           ),
                         );
