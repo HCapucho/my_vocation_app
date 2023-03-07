@@ -30,19 +30,8 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         SizedBox(height: 24),
         AnswerWidget(
-          answerValue: 0,
-          answerTitle: "Não representa",
-          isSelected: selectedIndex == 0,
-          onTap: (value) {
-            selectedIndex = 0;
-            setState(() {});
-            Future.delayed(Duration(seconds: 1))
-                .then((_) => widget.onTap(value, widget.question.id));
-          },
-        ),
-        AnswerWidget(
           answerValue: 1,
-          answerTitle: "Me representa mal",
+          answerTitle: "Não representa",
           isSelected: selectedIndex == 1,
           onTap: (value) {
             selectedIndex = 1;
@@ -53,7 +42,7 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         AnswerWidget(
           answerValue: 2,
-          answerTitle: "Quase não me representa",
+          answerTitle: "Me representa mal",
           isSelected: selectedIndex == 2,
           onTap: (value) {
             selectedIndex = 2;
@@ -64,7 +53,7 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         AnswerWidget(
           answerValue: 3,
-          answerTitle: "Indiferente",
+          answerTitle: "Quase não me representa",
           isSelected: selectedIndex == 3,
           onTap: (value) {
             selectedIndex = 3;
@@ -75,7 +64,7 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         AnswerWidget(
           answerValue: 4,
-          answerTitle: "Me representa pouco",
+          answerTitle: "Indiferente",
           isSelected: selectedIndex == 4,
           onTap: (value) {
             selectedIndex = 4;
@@ -86,7 +75,7 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         AnswerWidget(
           answerValue: 5,
-          answerTitle: "Me representa bem",
+          answerTitle: "Me representa pouco",
           isSelected: selectedIndex == 5,
           onTap: (value) {
             selectedIndex = 5;
@@ -97,10 +86,21 @@ class _QuizWidgetState extends State<QuizWidget> {
         ),
         AnswerWidget(
           answerValue: 6,
-          answerTitle: "Me representa muito bem",
+          answerTitle: "Me representa bem",
           isSelected: selectedIndex == 6,
           onTap: (value) {
             selectedIndex = 6;
+            setState(() {});
+            Future.delayed(Duration(seconds: 1))
+                .then((_) => widget.onTap(value, widget.question.id));
+          },
+        ),
+        AnswerWidget(
+          answerValue: 7,
+          answerTitle: "Me representa muito bem",
+          isSelected: selectedIndex == 7,
+          onTap: (value) {
+            selectedIndex = 7;
             setState(() {});
             Future.delayed(Duration(seconds: 1))
                 .then((_) => widget.onTap(value, widget.question.id));

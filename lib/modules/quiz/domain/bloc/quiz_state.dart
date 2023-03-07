@@ -33,17 +33,3 @@ class StartQuizSuccess extends QuizState {
   final UsuarioQuestionario usuarioQuestionario;
   StartQuizSuccess(this.usuarioQuestionario);
 }
-
-// Finish Quiz
-class FinishQuizInProgress extends QuizState {}
-
-class FinishQuizFailure extends QuizState {
-  final String errorMessage;
-
-  FinishQuizFailure(this.errorMessage);
-}
-
-class FinishQuizSuccess extends QuizState {
-  final UsuarioQuestionario usuarioQuestionario;
-  FinishQuizSuccess(this.usuarioQuestionario);
-}

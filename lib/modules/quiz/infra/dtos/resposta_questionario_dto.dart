@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -6,7 +5,7 @@ import 'package:my_vocation_app/modules/quiz/domain/models/enums/tipo_resposta.d
 
 class RespostaQuestionarioDto {
   final int idPergunta;
-  final TipoResposta resposta;
+  final int resposta;
   RespostaQuestionarioDto({
     required this.idPergunta,
     required this.resposta,
@@ -15,18 +14,18 @@ class RespostaQuestionarioDto {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'idPergunta': idPergunta,
-      'resposta': _TipoRespostaEnumMap[resposta],
+      'resposta': resposta,
     };
   }
 
   factory RespostaQuestionarioDto.fromMap(Map<String, dynamic> map) {
     return RespostaQuestionarioDto(
       idPergunta: map['idPergunta'] as int,
-      resposta: $enumDecode(_TipoRespostaEnumMap, map['resposta']),
+      resposta: map['resposta'] as int,
     );
   }
 
-  String toJson() => json.encode(toMap());
+  String toJson(RespostaQuestionarioDto e) => json.encode(toMap());
 
   factory RespostaQuestionarioDto.fromJson(String source) =>
       RespostaQuestionarioDto.fromMap(

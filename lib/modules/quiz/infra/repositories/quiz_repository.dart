@@ -7,6 +7,8 @@ import 'package:my_vocation_app/core/rest/custom_dio.dart';
 import 'package:my_vocation_app/modules/quiz/domain/models/pergunta.dart';
 import 'package:my_vocation_app/modules/quiz/domain/models/usuario_questionario.dart';
 import 'package:my_vocation_app/modules/quiz/infra/dtos/resposta_questionario_dto.dart';
+import 'package:my_vocation_app/modules/result/domain/models/curso.dart';
+import 'package:my_vocation_app/modules/result/infra/dtos/finish_quiz_dto.dart';
 
 class QuizRepository {
   final CustomDio dio;
@@ -44,23 +46,28 @@ class QuizRepository {
     }
   }
 
-  Future<ApiResponse<UsuarioQuestionario>> finishQuiz(
-      {required int idUsuario,
-      required int idQuestionario,
-      required List<RespostaQuestionarioDto> respostas}) async {
+  Future<ApiResponse<List<Curso>>> finishQuiz({
+    required int idUsuario,
+    required int idQuestionario,
+    required List<RespostaQuestionarioDto> respostas,
+  }) async {
     try {
+      FinishQuizDto dto = FinishQuizDto(
+        idUsuario: idUsuario,
+        idQuestionario: idQuestionario,
+        respostas: respostas,
+      );
+      var data = dto.toJson();
       var response = await dio.auth().post('/questionario/finalizar', data: {
-        'idUsuario': idUsuario,
-        'idQuestionario': idQuestionario,
-        'respostas': respostas
+        'dto': data,
       });
 
-      var result = UsuarioQuestionario.fromMap(response.data);
+      var result = response.data.map<Curso>((g) => Curso.fromMap(g)).toList();
 
-      return ApiResponse<UsuarioQuestionario>.success(result);
+      return ApiResponse<List<Curso>>.success(result);
     } catch (e, s) {
       log('Erro ao finalizar questionário', error: e, stackTrace: s);
-      return ApiErrorHandler.toApiResponse<UsuarioQuestionario>(e);
+      return ApiErrorHandler.toApiResponse<List<Curso>>(e);
     }
   }
 }

@@ -44,19 +44,4 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       emit(StartQuizSuccess(response.requiresBody));
     }
   }
-
-  FutureOr<void> _finishQuiz(
-      StartQuizEvent event, Emitter<QuizState> emit) async {
-    emit(StartQuizInProgress());
-    final response = await quizRepository.startQuiz(
-      idUsuario: event.idUsuario,
-      idQuestionario: event.idQuestionario,
-    );
-
-    if (response.isError()) {
-      emit(StartQuizFailure(response.errorMessage!));
-    } else if (response.isSuccessResponse()) {
-      emit(StartQuizSuccess(response.requiresBody));
-    }
-  }
 }

@@ -9,6 +9,7 @@ import 'package:my_vocation_app/modules/login/domain/bloc/login_bloc.dart';
 import 'package:my_vocation_app/modules/login/infra/repositories/login_repository.dart';
 import 'package:my_vocation_app/modules/login/login_module.dart';
 import 'package:my_vocation_app/modules/quiz/quiz_module.dart';
+import 'package:my_vocation_app/modules/result/result_module.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -33,6 +34,7 @@ class MyVocationApp extends StatelessWidget {
         ...loginDependencies,
         ...homeDependencies,
         ...quizDependencies,
+        ...resultDependencies,
       ],
       child: AppWidget(),
     );

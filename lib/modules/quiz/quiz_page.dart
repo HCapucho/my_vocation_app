@@ -77,7 +77,7 @@ class _QuizPageState extends State<QuizPage>
 
   void onSelected(int value, int idPergunta) {
     final resposta = RespostaQuestionarioDto(
-        idPergunta: idPergunta, resposta: TipoResposta.values[value]);
+        idPergunta: idPergunta, resposta: value); //TipoResposta.values[value]);
     controller.respostas.add(resposta);
     nextPage();
   }
@@ -159,15 +159,12 @@ class _QuizPageState extends State<QuizPage>
                     child: NextButtonWidget.green(
                       label: "Confirmar",
                       onTap: () {
-                        for (var element in controller.respostas) {
-                          log(element.resposta.toString());
-                        }
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (context) => ResultPage(
+                              idQuestionario: widget.idQuestionario,
                               title: widget.nome,
-                              length: widget.quantidadePerguntas,
-                              result: 0,
+                              respostas: controller.respostas,
                             ),
                           ),
                         );

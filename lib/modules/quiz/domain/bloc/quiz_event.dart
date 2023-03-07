@@ -14,11 +14,3 @@ class StartQuizEvent extends QuizEvent {
 
   StartQuizEvent(this.idUsuario, this.idQuestionario);
 }
-
-class FinishQuizEvent extends QuizEvent {
-  final int idUsuario;
-  final int idQuestionario;
-  final List<RespostaQuestionarioDto> respostas;
-
-  FinishQuizEvent(this.idUsuario, this.idQuestionario, this.respostas);
-}
