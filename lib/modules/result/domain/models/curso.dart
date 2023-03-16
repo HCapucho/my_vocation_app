@@ -2,23 +2,23 @@ import 'dart:convert';
 
 class Curso {
   String nome;
-  int? duracao;
+  List<String> universidades;
   Curso({
     required this.nome,
-    this.duracao,
+    required this.universidades,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'nome': nome,
-      'duracao': duracao,
+      'universidades': universidades,
     };
   }
 
   factory Curso.fromMap(Map<String, dynamic> map) {
     return Curso(
       nome: map['nome'] as String,
-      duracao: map['duracao'] != null ? map['duracao'] as int : null,
+      universidades: List<String>.from(map['universidades']),
     );
   }
 

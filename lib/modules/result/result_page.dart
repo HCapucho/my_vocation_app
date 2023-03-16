@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_vocation_app/core/core.dart';
 import 'package:my_vocation_app/core/helpers/loader.dart';
 import 'package:my_vocation_app/core/helpers/messages.dart';
+import 'package:my_vocation_app/modules/home/widgets/appbar/app_bar_widget.dart';
 import 'package:my_vocation_app/modules/quiz/infra/dtos/resposta_questionario_dto.dart';
 import 'package:my_vocation_app/modules/result/domain/bloc/result_bloc.dart';
 import 'package:my_vocation_app/modules/result/domain/models/curso.dart';
@@ -26,12 +28,21 @@ class ResultPage extends StatefulWidget {
 class _ResultPageState extends State<ResultPage>
     with Messages<ResultPage>, Loader<ResultPage> {
   late final ResultBloc bloc;
+  String? username;
+  late List<bool> _expanded;
 
   @override
   void initState() {
     super.initState();
     bloc = context.read<ResultBloc>();
+    _getName();
     _finishQuiz();
+    _expanded = [];
+  }
+
+  _getName() async {
+    final sp = await SharedPreferences.getInstance();
+    username = sp.getString('username');
   }
 
   @override
@@ -63,6 +74,9 @@ class _ResultPageState extends State<ResultPage>
           showError(state.errorMessage);
         }
         if (state is FinishQuizSuccess) {
+          setState(() {
+            _expanded = List.generate(state.cursos.length, (index) => false);
+          });
           hideLoader();
         }
       }, buildWhen: (context, state) {
@@ -75,9 +89,52 @@ class _ResultPageState extends State<ResultPage>
           return Container();
         }
         if (state is FinishQuizSuccess) {
-          return ListView.builder(itemBuilder: (context, index) {
-            return Text(state.cursos[index].nome);
-          });
+          return Scaffold(
+            appBar: AppBarWidget(username: username!),
+            body: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Text("Melhores Cursos", style: AppTextStyles.heading30),
+                  SizedBox(height: 16),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.cursos.length,
+                      itemBuilder: (context, index) {
+                        return ExpansionPanelList(
+                          expansionCallback: (int panelIndex, bool isExpanded) {
+                            setState(() {
+                              _expanded[index] = !_expanded[index];
+                            });
+                          },
+                          children: [
+                            ExpansionPanel(
+                              headerBuilder:
+                                  (BuildContext context, bool isExpanded) {
+                                return ListTile(
+                                  title: Text(state.cursos[index].nome),
+                                );
+                              },
+                              body: Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Column(
+                                  children: state.cursos[index].universidades
+                                      .map((item) => Text(item,
+                                          style: AppTextStyles.body11))
+                                      .toList(),
+                                ),
+                              ),
+                              isExpanded: _expanded[index],
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         return Container();
       }),

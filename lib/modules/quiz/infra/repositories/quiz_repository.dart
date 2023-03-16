@@ -52,17 +52,26 @@ class QuizRepository {
     required List<RespostaQuestionarioDto> respostas,
   }) async {
     try {
-      FinishQuizDto dto = FinishQuizDto(
-        idUsuario: idUsuario,
-        idQuestionario: idQuestionario,
-        respostas: respostas,
-      );
-      var data = dto.toJson();
-      var response = await dio.auth().post('/questionario/finalizar', data: {
-        'dto': data,
-      });
+      dynamic result;
 
-      var result = response.data.map<Curso>((g) => Curso.fromMap(g)).toList();
+      for (int i = 0; i < respostas.length; i++) {
+        FinishQuizDto dto = FinishQuizDto(
+          idUsuario: idUsuario,
+          idQuestionario: idQuestionario,
+          idPergunta: respostas[i].idPergunta,
+          resposta: respostas[i].resposta,
+          perguntaFinal: respostas.length == i,
+        );
+        var response = await dio.auth().post('/questionario/finalizar', data: {
+          'IdUsuario': idUsuario,
+          'IdQuestionario': idQuestionario,
+          'IdPergunta': respostas[i].idPergunta,
+          'Resposta': respostas[i].resposta,
+          'PerguntaFinal': respostas.length == (i + 1),
+        });
+
+        result = response.data.map<Curso>((g) => Curso.fromMap(g)).toList();
+      }
 
       return ApiResponse<List<Curso>>.success(result);
     } catch (e, s) {

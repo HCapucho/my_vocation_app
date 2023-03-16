@@ -1,21 +1,27 @@
 import 'dart:convert';
-import 'package:my_vocation_app/modules/quiz/infra/dtos/resposta_questionario_dto.dart';
 
 class FinishQuizDto {
   final int idUsuario;
   final int idQuestionario;
-  final List<RespostaQuestionarioDto> respostas;
+  final int idPergunta;
+  final int resposta;
+  final bool perguntaFinal;
+
   FinishQuizDto({
     required this.idUsuario,
     required this.idQuestionario,
-    required this.respostas,
+    required this.idPergunta,
+    required this.resposta,
+    required this.perguntaFinal,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'idUsuario': idUsuario,
       'idQuestionario': idQuestionario,
-      'respostas': respostas.map((x) => x.toMap()).toList(),
+      'idPergunta': idPergunta,
+      'resposta': resposta,
+      'perguntaFinal': perguntaFinal,
     };
   }
 
@@ -23,8 +29,9 @@ class FinishQuizDto {
     return FinishQuizDto(
       idUsuario: map['idUsuario'] as int,
       idQuestionario: map['idQuestionario'] as int,
-      respostas:
-          map['respostas'].map((x) => RespostaQuestionarioDto.fromMap(x)),
+      idPergunta: map['idPergunta'] as int,
+      resposta: map['resposta'] as int,
+      perguntaFinal: map['perguntaFinal'] as bool,
     );
   }
 
